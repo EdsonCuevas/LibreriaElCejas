@@ -1,6 +1,6 @@
 <?php
     function setHeader($args){
-        $ua = as_object( $args->ua );
+        
         
 ?>
 <!DOCTYPE html>
@@ -38,49 +38,16 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/">Inicio</a>
-                        </li>                        
-                        <?php if(isset($ua->sv) && $ua->sv ) : ?>
-                            <li class="nav-item">
-                                <a href="/UserPosts" class="nav-link btn btn-link"
-                                    aria-current="page">
-                                    Mis publicaciones
-                                </a>
-                            </li>
-                        <?php endif ?>
-                    </ul>
-                    <ul class="navbar-nav me-5 mb-2 d-flex">
-
-                      <?php if( !$ua->sv ) : ?>
-
-                        <li class="nav-item">
-                            <a href="/Session/iniSession" class="nav-link btn btn-link">
-                                Inicar sesión
-                            </a>
+                            <a class="nav-link" aria-current="page" href="/">Libros</a>
                         </li>
-                        <?php else : ?>
-                            <li class="nav-item dropdown me-5">
-                                <a href="#" class="nav-link dropdown-toggle"
-                                    role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <?=isset($ua->username) ? $ua->username : 'Bienvenido' ?>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="\Session\logout
-                                        " class="dropdown-item btn btn-link">
-                                        Cerrar sessión
-                                    </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        <?php endif ?>
-                       
-                        
-                            <!-- User menu -->
-                        
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/">Autores</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/">Categorias</a>
+                        </li>
                     </ul>
                 </div>
             </div>

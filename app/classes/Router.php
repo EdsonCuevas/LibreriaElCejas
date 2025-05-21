@@ -41,7 +41,7 @@
         }
 
         private function getController(){
-            $controller = 'Home';
+            $controller = 'Books';
             if( isset( $this->uri[0]) ){
                 $controller = $this->uri[0];
                 unset($this->uri[0]);
