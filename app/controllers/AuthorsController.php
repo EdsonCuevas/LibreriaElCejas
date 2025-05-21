@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use app\models\autores as autores;
 use app\classes\Views as View;
-use app\controllers\auth\SessionController as SC;
+
 
 class AuthorsController extends Controller {
     public function __construct(){

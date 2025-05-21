@@ -4,8 +4,6 @@ namespace app\controllers;
 
 use app\models\libros as libros;
 use app\classes\Views as View;
-use app\controllers\auth\SessionController as SC;
-
 
 class BooksController extends Controller {
     public function __construct(){

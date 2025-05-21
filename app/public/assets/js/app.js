@@ -2,6 +2,7 @@ const app = {
     routes : {
         getBooks : "/Books/getBooks",
         getAuthors : "/Authors/getAuthors",
+        getCategories : "/Categories/getCategories",
     },
 
     loadBooks: async function () {
@@ -81,6 +82,43 @@ const app = {
         } catch (error) {
             console.error("Error cargando autores:", error);
             $('#authorsTable tbody').html(`<tr><td colspan="5">Error al cargar autores.</td></tr>`);
+        }
+    },
+
+    loadCategories: async function () {
+        try {
+            const categories = await $.getJSON(this.routes.getCategories);
+            console.log(categories)
+
+            let html = '';
+            if (categories.length === 0) {
+                html = `<tr><td colspan="5">No hay categorias disponibles.</td></tr>`;
+            } else {
+                categories.forEach(category => {
+                    html += `
+                        <tr>
+                            <td>${category.nombre_categoria}</td>
+                            <td>${category.descripcion}</td>
+                            <td>${category.created_at}</td>
+                            <td>${category.updated_at}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" title="Eliminar">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            $('#categoriesTable tbody').html(html);
+
+        } catch (error) {
+            console.error("Error cargando categorias:", error);
+            $('#categoriesTable tbody').html(`<tr><td colspan="5">Error al cargar categorias.</td></tr>`);
         }
     }
 
