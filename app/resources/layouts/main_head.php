@@ -40,13 +40,13 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/">Libros</a>
+                            <a class="nav-link" aria-current="page" href="/books/index">Libros</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/">Autores</a>
+                            <a class="nav-link" aria-current="page" href="/authors/index">Autores</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/">Categorias</a>
+                            <a class="nav-link" aria-current="page" href="/categories/index">Categorias</a>
                         </li>
                     </ul>
                 </div>

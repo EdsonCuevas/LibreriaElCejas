@@ -14,7 +14,7 @@ class BooksController extends Controller {
 
     public function index(){
         $response = ['title' => 'Libros'];
-        View::render('libros', $response);
+        View::render('books', $response);
     }
 
     public function getBooks(){

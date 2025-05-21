@@ -39,7 +39,7 @@ class libros extends Model {
                             ])
                         ->join('autores b', 'a.autor_id = b.id')
                         ->join('categorias c', 'a.categoria_id = c.id')
-                        ->orderBy([['a.fecha_publicacion', 'desc']])
+                        ->orderBy([['a.id', 'desc']])
                         ->limit($limit)
                         ->get();
 
