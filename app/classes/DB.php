@@ -128,7 +128,7 @@
             foreach( $data as $key => $value ){
                 $sql .= $key . "='" . $value . "',";
             }
-            $sql = trim($sql,',') . " where " . $where;
+            $sql = trim($sql,',') . " where id = " . $where;
             //echo $sql;die;
             return $this->table->query( $sql );
         }
