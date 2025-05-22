@@ -5,7 +5,7 @@ const app = {
         getCategories : "/Categories/getCategories",
         addCategory : "/Categories/addCategory",
         deleteCategory : "/Categories/deleteCategory",
-        editCategory : "/Categories/editCategory",
+        updateCategory : "/Categories/updateCategory",
     },
 
     loadBooks: async function () {
@@ -105,7 +105,7 @@ const app = {
                             <td>${category.created_at}</td>
                             <td>${category.updated_at}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick="app.editCategory(${category.id})">
+                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick='app.showEditModal(${JSON.stringify(category)})'>
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteCategory(${category.id})">
@@ -140,16 +140,45 @@ const app = {
             });
 
             if (response.status) {
-                alert('Categoría guardada exitosamente.');
+                Swal.fire('Categoria Creada!', 'La categoría fue creada con éxito.', 'success');
                 this.loadCategories();
             } else {
-                alert('Error al guardar la categoría.');
+                Swal.fire('Error', 'No se pudo crear la categoría.', 'error');
             }
         } catch (error) {
             console.error("Error guardando categoría:", error);
             alert('Error al guardar la categoría.');
         }
     },
+
+    updateCategory: async function () {
+    const data = {
+        id: $('#editCategoriaId').val(),
+        nombre_categoria: $('#editNombreCategoria').val(),
+        descripcion: $('#editDescripcionCategoria').val()
+    };
+
+    try {
+        const response = await $.ajax({
+            url: this.routes.updateCategory,
+            type: 'POST',
+            data: data,
+            dataType: 'json'
+        });
+
+        if (response.status) {
+            Swal.fire('¡Actualizado!', 'La categoría fue actualizada con éxito.', 'success');
+            $('#modalEditarCategoria').modal('hide');
+            this.loadCategories();
+        } else {
+            Swal.fire('Error', 'No se pudo actualizar la categoría.', 'error');
+        }
+    } catch (error) {
+        console.error(error);
+        Swal.fire('Error', 'Ocurrió un problema con la solicitud.', 'error');
+    }
+},
+
 
     deleteCategory: async function (id) {
     const result = await Swal.fire({

@@ -123,9 +123,20 @@
             return $this->table->query( $sql );
         }
 
+        public function update( $table, $data, $where ){
+            $sql = "update " . $table . " set ";
+            foreach( $data as $key => $value ){
+                $sql .= $key . "='" . $value . "',";
+            }
+            $sql = trim($sql,',') . " where " . $where;
+            //echo $sql;die;
+            return $this->table->query( $sql );
+        }
+
         public function delete( $table, $id ){
             $sql = "delete from " . $table . " where id = " . $id;
             return $this->table->query( $sql );
         }
+        
 
     }
