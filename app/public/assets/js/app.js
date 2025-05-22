@@ -30,7 +30,10 @@ const app = {
                         <td>${book.created_at}</td>
                         <td>${book.updated_at}</td>
                         <td>
-                            <button class="btn btn-sm btn-primary me-1" title="Editar">
+                            <button class="btn btn-sm btn-primary me-1" title="Ver" onclick='app.viewBook(${JSON.stringify(book)})'>
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary me-1" title="Editar">
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
                             <button class="btn btn-sm btn-danger" title="Eliminar">
@@ -49,6 +52,24 @@ const app = {
         $('#booksTable tbody').html(`<tr><td colspan="5">Error al cargar libros.</td></tr>`);
         }
     },
+
+    viewBook: function(book) {
+        // Llenar campos del modal
+        $('#verLibroImagen').attr('src', book.imagen || 'uploads/notfound.png');
+        $('#verLibroGenero').text(book.categoria || 'Sin categoría');
+        $('#verLibroTitulo').text(book.titulo);
+        $('#verLibroAutor').text(`por ${book.autor}`);
+        $('#verLibroAnio').text(book.fecha_publicacion);
+        $('#verLibroPaginas').text(book.numero_paginas);
+        $('#verLibroIsbn').text(book.isbn);
+        $('#verLibroIdioma').text(book.idioma);
+        $('#verLibroSinopsis').text(book.sinopsis || 'Sin sinopsis.');
+
+        // Mostrar modal
+        const modal = new bootstrap.Modal(document.getElementById('modalVerLibro'));
+        modal.show();
+    },
+
 
     loadAuthors: async function () {
         try {

@@ -7,7 +7,9 @@ class libros extends Model {
     
     protected $fillable = [
         'titulo',
+        'sinopsis',
         'isbn',
+        'imagen',
         'autor_id',
         'categoria_id',
         'fecha_publicacion',
@@ -28,7 +30,9 @@ class libros extends Model {
         $result = $this->select([
                                 'a.id',
                                 'a.titulo',
+                                'a.sinopsis',
                                 'a.isbn',
+                                'a.imagen',
                                 'a.fecha_publicacion',
                                 'a.numero_paginas',
                                 'a.idioma',
