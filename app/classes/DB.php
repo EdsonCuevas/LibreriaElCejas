@@ -109,4 +109,18 @@
 
         }
 
+        public function insert( $table, $data ){
+            $sql = "insert into " . $table . " (";
+            foreach( $data as $key => $value ){
+                $sql .= $key . ",";
+            }
+            $sql = trim($sql,',') . ") values (";
+            foreach( $data as $key => $value ){
+                $sql .= "'" . $value . "',";
+            }
+            $sql = trim($sql,',') . ")";
+            //echo $sql;die;
+            return $this->table->query( $sql );
+        }
+
     }

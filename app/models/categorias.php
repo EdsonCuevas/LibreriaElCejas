@@ -33,4 +33,21 @@ class categorias extends Model {
 
         return $result;
     }
+
+    public function addCategory($data){
+        $this->values = [
+            'nombre_categoria' => $data['nombre_categoria'],
+            'descripcion' => $data['descripcion'],
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        $result = $this->insert('categorias', $this->values);
+
+        if($result){
+            return ['status' => true, 'message' => 'Categoría agregada correctamente'];
+        } else {
+            return ['status' => false, 'message' => 'Error al agregar la categoría'];
+        }
+    }
 }

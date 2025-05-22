@@ -3,6 +3,7 @@ const app = {
         getBooks : "/Books/getBooks",
         getAuthors : "/Authors/getAuthors",
         getCategories : "/Categories/getCategories",
+        addCategory : "/Categories/addCategory",
     },
 
     loadBooks: async function () {
@@ -120,8 +121,33 @@ const app = {
             console.error("Error cargando categorias:", error);
             $('#categoriesTable tbody').html(`<tr><td colspan="5">Error al cargar categorias.</td></tr>`);
         }
-    }
+    },
 
+    addCategory: async function () {
+        const categoryData = {
+            nombre_categoria: $('#nombreCategoria').val(),
+            descripcion: $('#descripcionCategoria').val()
+        };
+
+        try {
+            const response = await $.ajax({
+                url: this.routes.addCategory,
+                type: 'POST',
+                data: categoryData,
+                dataType: 'json'
+            });
+
+            if (response.status) {
+                alert('Categoría guardada exitosamente.');
+                this.loadCategories();
+            } else {
+                alert('Error al guardar la categoría.');
+            }
+        } catch (error) {
+            console.error("Error guardando categoría:", error);
+            alert('Error al guardar la categoría.');
+        }
+    }
 
     
 }
