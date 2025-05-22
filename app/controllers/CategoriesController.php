@@ -19,4 +19,22 @@ class CategoriesController extends Controller {
         $category = new categorias();
         echo $category->getAllCategories();
     }
+
+    public function addCategory(){
+        $category = new categorias();
+        $response = $category->addCategory($_POST);
+        echo json_encode($response);
+    }
+
+    public function updateCategory(){
+        $category = new categorias();
+        $response = $category->updateCategory($_POST);
+        echo json_encode($response);
+    }
+
+    public function deleteCategory(){
+        $category = new categorias();
+        $response = $category->deleteCategory($_POST['id']);
+        echo json_encode($response);
+    }
 }

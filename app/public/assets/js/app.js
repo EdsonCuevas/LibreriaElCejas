@@ -3,6 +3,9 @@ const app = {
         getBooks : "/Books/getBooks",
         getAuthors : "/Authors/getAuthors",
         getCategories : "/Categories/getCategories",
+        addCategory : "/Categories/addCategory",
+        deleteCategory : "/Categories/deleteCategory",
+        updateCategory : "/Categories/updateCategory",
     },
 
     loadBooks: async function () {
@@ -102,10 +105,10 @@ const app = {
                             <td>${category.created_at}</td>
                             <td>${category.updated_at}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary me-1" title="Editar">
+                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick='app.showEditModal(${JSON.stringify(category)})'>
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" title="Eliminar">
+                                <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteCategory(${category.id})">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </td>
@@ -120,7 +123,110 @@ const app = {
             console.error("Error cargando categorias:", error);
             $('#categoriesTable tbody').html(`<tr><td colspan="5">Error al cargar categorias.</td></tr>`);
         }
+    },
+
+    addCategory: async function () {
+        const categoryData = {
+            nombre_categoria: $('#nombreCategoria').val(),
+            descripcion: $('#descripcionCategoria').val()
+        };
+
+        try {
+            const response = await $.ajax({
+                url: this.routes.addCategory,
+                type: 'POST',
+                data: categoryData,
+                dataType: 'json'
+            });
+
+            if (response.status) {
+                Swal.fire('Categoria Creada!', 'La categoría fue creada con éxito.', 'success');
+                this.loadCategories();
+            } else {
+                Swal.fire('Error', 'No se pudo crear la categoría.', 'error');
+            }
+        } catch (error) {
+            console.error("Error guardando categoría:", error);
+            alert('Error al guardar la categoría.');
+        }
+    },
+
+    updateCategory: async function () {
+    const data = {
+        id: $('#editCategoriaId').val(),
+        nombre_categoria: $('#editNombreCategoria').val(),
+        descripcion: $('#editDescripcionCategoria').val()
+    };
+
+    try {
+        const response = await $.ajax({
+            url: this.routes.updateCategory,
+            type: 'POST',
+            data: data,
+            dataType: 'json'
+        });
+
+        if (response.status) {
+            Swal.fire('¡Actualizado!', 'La categoría fue actualizada con éxito.', 'success');
+            $('#modalEditarCategoria').modal('hide');
+            this.loadCategories();
+        } else {
+            Swal.fire('Error', 'No se pudo actualizar la categoría.', 'error');
+        }
+    } catch (error) {
+        console.error(error);
+        Swal.fire('Error', 'Ocurrió un problema con la solicitud.', 'error');
     }
+},
+
+
+    deleteCategory: async function (id) {
+    const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¡No podrás revertir esto!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const response = await $.ajax({
+                url: this.routes.deleteCategory,
+                type: 'POST',
+                data: { id: id },
+                dataType: 'json'
+            });
+
+            if (response.status) {
+                Swal.fire(
+                    '¡Eliminado!',
+                    'La categoría ha sido eliminada.',
+                    'success'
+                );
+                this.loadCategories();
+            } else {
+                Swal.fire(
+                    'Error',
+                    'No se pudo eliminar la categoría.',
+                    'error'
+                );
+            }
+        } catch (error) {
+            console.error("Error eliminando categoría:", error);
+            Swal.fire(
+                'Error',
+                'Ocurrió un error al eliminar la categoría.',
+                'error'
+                );
+            }
+        }
+    },
+
+
 
 
     
