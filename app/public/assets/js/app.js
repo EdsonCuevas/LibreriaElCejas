@@ -106,7 +106,7 @@ const app = {
                                 <button class="btn btn-sm btn-primary me-1" title="Editar">
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" title="Eliminar">
+                                <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteCategory(${category.id})">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </td>
@@ -147,6 +147,29 @@ const app = {
             console.error("Error guardando categoría:", error);
             alert('Error al guardar la categoría.');
         }
+    },
+
+    deleteCategory : async function (id) {
+        
+        try {
+            const response = await $.ajax({
+                url: `/Categories/deleteCategory`,
+                type: 'POST',
+                data: { id: id },
+                dataType: 'json'
+            });
+
+            if (response.status) {
+                alert('Categoría eliminada exitosamente.');
+                this.loadCategories();
+            } else {
+                alert('Error al eliminar la categoría.');
+            }
+        } catch (error) {
+            console.error("Error eliminando categoría:", error);
+            alert('Error al eliminar la categoría.');
+        }
+    
     }
 
     

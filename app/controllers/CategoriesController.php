@@ -25,4 +25,10 @@ class CategoriesController extends Controller {
         $response = $category->addCategory($_POST);
         echo json_encode($response);
     }
+
+    public function deleteCategory(){
+        $category = new categorias();
+        $response = $category->deleteCategory($_POST['id']);
+        echo json_encode($response);
+    }
 }

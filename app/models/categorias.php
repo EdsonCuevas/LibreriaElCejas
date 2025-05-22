@@ -50,4 +50,14 @@ class categorias extends Model {
             return ['status' => false, 'message' => 'Error al agregar la categoría'];
         }
     }
+
+    public function deleteCategory($id){
+        $result = $this->delete('categorias', $id);
+
+        if($result){
+            return ['status' => true, 'message' => 'Categoría eliminada correctamente'];
+        } else {
+            return ['status' => false, 'message' => 'Error al eliminar la categoría'];
+        }
+    }
 }

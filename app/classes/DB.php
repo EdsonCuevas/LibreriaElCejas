@@ -123,4 +123,9 @@
             return $this->table->query( $sql );
         }
 
+        public function delete( $table, $id ){
+            $sql = "delete from " . $table . " where id = " . $id;
+            return $this->table->query( $sql );
+        }
+
     }

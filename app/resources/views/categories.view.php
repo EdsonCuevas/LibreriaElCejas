@@ -27,11 +27,13 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí irán los libros -->
+                <!-- Aquí irán las categorias -->
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Modal para agregar categoría -->
 
 <div class="modal fade" id="modalAgregarCategoria" tabindex="-1" aria-labelledby="modalAgregarCategoriaLabel" aria-hidden="true">
   <div class="modal-dialog">
