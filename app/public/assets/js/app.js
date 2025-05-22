@@ -4,6 +4,8 @@ const app = {
         getAuthors : "/Authors/getAuthors",
         getCategories : "/Categories/getCategories",
         addCategory : "/Categories/addCategory",
+        deleteCategory : "/Categories/deleteCategory",
+        editCategory : "/Categories/editCategory",
     },
 
     loadBooks: async function () {
@@ -103,7 +105,7 @@ const app = {
                             <td>${category.created_at}</td>
                             <td>${category.updated_at}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary me-1" title="Editar">
+                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick="app.editCategory(${category.id})">
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteCategory(${category.id})">
@@ -149,28 +151,54 @@ const app = {
         }
     },
 
-    deleteCategory : async function (id) {
-        
+    deleteCategory: async function (id) {
+    const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¡No podrás revertir esto!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
         try {
             const response = await $.ajax({
-                url: `/Categories/deleteCategory`,
+                url: this.routes.deleteCategory,
                 type: 'POST',
                 data: { id: id },
                 dataType: 'json'
             });
 
             if (response.status) {
-                alert('Categoría eliminada exitosamente.');
+                Swal.fire(
+                    '¡Eliminado!',
+                    'La categoría ha sido eliminada.',
+                    'success'
+                );
                 this.loadCategories();
             } else {
-                alert('Error al eliminar la categoría.');
+                Swal.fire(
+                    'Error',
+                    'No se pudo eliminar la categoría.',
+                    'error'
+                );
             }
         } catch (error) {
             console.error("Error eliminando categoría:", error);
-            alert('Error al eliminar la categoría.');
+            Swal.fire(
+                'Error',
+                'Ocurrió un error al eliminar la categoría.',
+                'error'
+                );
+            }
         }
-    
-    }
+    },
+
+
+
 
     
 }
