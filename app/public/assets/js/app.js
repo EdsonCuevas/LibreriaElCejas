@@ -1,11 +1,14 @@
 const app = {
     routes : {
         getBooks : "/Books/getBooks",
+        updateBook: "/Books/updateBook",
+        deleteBook: "/Books/deleteBook",
         getAuthors : "/Authors/getAuthors",
         getCategories : "/Categories/getCategories",
         addCategory : "/Categories/addCategory",
         deleteCategory : "/Categories/deleteCategory",
         updateCategory : "/Categories/updateCategory",
+
     },
 
     loadBooks: async function () {
@@ -30,10 +33,13 @@ const app = {
                         <td>${book.created_at}</td>
                         <td>${book.updated_at}</td>
                         <td>
-                            <button class="btn btn-sm btn-primary me-1" title="Editar">
+                            <button class="btn btn-sm btn-primary me-1" title="Ver" onclick='app.viewBook(${JSON.stringify(book)})'>
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary me-1" title="Editar" onclick='app.showEditModal(${JSON.stringify(book)})'>
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger" title="Eliminar">
+                            <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteBook(${book.id})">
                                 <i class="bi bi-trash-fill"></i>
                             </button>
                         </td>
@@ -49,6 +55,142 @@ const app = {
         $('#booksTable tbody').html(`<tr><td colspan="5">Error al cargar libros.</td></tr>`);
         }
     },
+
+    addBook: async function () {
+    const form = document.getElementById('formAgregarLibro');
+    const formData = new FormData(form);
+
+    try {
+        const response = await $.ajax({
+            url: '/Books/addBook', // Asegúrate de que este endpoint exista en tu backend
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+        });
+
+        console.log(response);
+
+        // Cierra el modal, limpia el formulario y recarga los libros
+        $('#modalAgregarLibro').modal('hide');
+        form.reset();
+        this.loadBooks();
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Libro agregado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+    } catch (error) {
+        console.error("Error al agregar el libro:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al agregar el libro',
+            text: error.responseJSON?.message || 'Ocurrió un error inesperado.'
+        });
+    }
+},
+
+    viewBook: function(book) {
+        // Llenar campos del modal
+        $('#verLibroImagen').attr('src', book.imagen || '/uploads/notfound.png');
+        $('#verLibroGenero').text(book.categoria || 'Sin categoría');
+        $('#verLibroTitulo').text(book.titulo);
+        $('#verLibroAutor').text(`por ${book.autor}`);
+        $('#verLibroAnio').text(book.fecha_publicacion);
+        $('#verLibroPaginas').text(book.numero_paginas);
+        $('#verLibroIsbn').text(book.isbn);
+        $('#verLibroIdioma').text(book.idioma);
+        $('#verLibroSinopsis').text(book.sinopsis || 'Sin sinopsis.');
+
+        // Mostrar modal
+        const modal = new bootstrap.Modal(document.getElementById('modalVerLibro'));
+        modal.show();
+    },
+
+    showEditModal: async function (book) {
+    // Llenar select de autores y categorías
+    const [autores, categorias] = await Promise.all([
+        $.getJSON(this.routes.getAuthors),
+        $.getJSON(this.routes.getCategories)
+    ]);
+
+    // Llenar select de autores
+    const autorSelect = $('#editAutor');
+    autorSelect.empty().append(`<option value="">Seleccione un autor</option>`);
+    autores.forEach(autor => {
+        autorSelect.append(`<option value="${autor.id}" ${autor.nombre_completo === book.autor ? 'selected' : ''}>${autor.nombre_completo}</option>`);
+    });
+
+    // Llenar select de categorías
+    const categoriaSelect = $('#editCategoria');
+    categoriaSelect.empty().append(`<option value="">Seleccione una categoría</option>`);
+    categorias.forEach(cat => {
+        categoriaSelect.append(`<option value="${cat.id}" ${cat.nombre_categoria === book.categoria ? 'selected' : ''}>${cat.nombre_categoria}</option>`);
+    });
+
+    // Rellenar los campos del formulario
+    $('#editLibroId').val(book.id);
+    $('#editTitulo').val(book.titulo);
+    $('#editIsbn').val(book.isbn);
+    $('#editFechaPublicacion').val(book.fecha_publicacion);
+    $('#editIdioma').val(book.idioma);
+    $('#editNumeroPaginas').val(book.numero_paginas);
+    $('#editSinopsis').val(book.sinopsis);
+
+    // Mostrar el modal
+    $('#modalEditarLibro').modal('show');
+    },
+
+    deleteBook: async function (id) {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¡No podrás revertir esto!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await $.ajax({
+                    url: this.routes.deleteBook,
+                    type: 'POST',
+                    data: { id: id },
+                    dataType: 'json'
+                });
+
+                if (response.status) {
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El libro ha sido eliminado.',
+                        'success'
+                    );
+                    this.loadBooks();
+                } else {
+                    Swal.fire(
+                        'Error',
+                        'No se pudo eliminar el libro.',
+                        'error'
+                    );
+                }
+            } catch (error) {
+                console.error("Error eliminando libro:", error);
+                Swal.fire(
+                    'Error',
+                    'Ocurrió un error al eliminar el libro.',
+                    'error'
+                );
+            }
+        }
+    },
+
+
 
     loadAuthors: async function () {
         try {
@@ -87,6 +229,39 @@ const app = {
             $('#authorsTable tbody').html(`<tr><td colspan="5">Error al cargar autores.</td></tr>`);
         }
     },
+
+    loadAuthorsSelect: async function () {
+    try {
+        const authors = await $.getJSON(this.routes.getAuthors);
+        let options = '<option value="">Seleccione un autor</option>';
+
+        authors.forEach(author => {
+            options += `<option value="${author.id}">${author.nombre_completo}</option>`;
+        });
+
+        $('#selectAutor').html(options);
+    } catch (error) {
+        console.error("Error al cargar autores:", error);
+        $('#selectAutor').html('<option>Error al cargar</option>');
+    }
+},
+
+    loadCategoriesSelect: async function () {
+    try {
+        const categories = await $.getJSON(this.routes.getCategories);
+        let options = '<option value="">Seleccione una categoría</option>';
+
+        categories.forEach(category => {
+            options += `<option value="${category.id}">${category.nombre_categoria}</option>`;
+        });
+
+        $('#selectCategoria').html(options);
+    } catch (error) {
+        console.error("Error al cargar categorías:", error);
+        $('#selectCategoria').html('<option>Error al cargar</option>');
+    }
+},
+
 
     loadCategories: async function () {
         try {

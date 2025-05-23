@@ -7,7 +7,9 @@ class libros extends Model {
     
     protected $fillable = [
         'titulo',
+        'sinopsis',
         'isbn',
+        'imagen',
         'autor_id',
         'categoria_id',
         'fecha_publicacion',
@@ -28,7 +30,9 @@ class libros extends Model {
         $result = $this->select([
                                 'a.id',
                                 'a.titulo',
+                                'a.sinopsis',
                                 'a.isbn',
+                                'a.imagen',
                                 'a.fecha_publicacion',
                                 'a.numero_paginas',
                                 'a.idioma',
@@ -45,4 +49,23 @@ class libros extends Model {
 
         return $result;
     }
+
+    public function updateBook($data) {
+    $this->values = $data;
+    $this->values['updated_at'] = date('Y-m-d H:i:s');
+    return $this->update('libros', $this->values, $data['id']);
+    }
+    
+
+    public function save($data){
+        $this->values = $data;
+        $this->values['created_at'] = date('Y-m-d H:i:s');
+        $this->values['updated_at'] = date('Y-m-d H:i:s');
+        $this->insert('libros', $this->values);
+    }
+
+    public function deleteBook($data){
+        return $this->delete('libros', $data['id']); // solo pasas el ID, no el array completo
+    }
+
 }
