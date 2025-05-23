@@ -49,4 +49,11 @@ class libros extends Model {
 
         return $result;
     }
+
+    public function save($data){
+        $this->values = $data;
+        $this->values['created_at'] = date('Y-m-d H:i:s');
+        $this->values['updated_at'] = date('Y-m-d H:i:s');
+        $this->insert('libros', $this->values);
+    }
 }

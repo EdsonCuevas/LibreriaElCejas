@@ -53,9 +53,46 @@ const app = {
         }
     },
 
+    addBook: async function () {
+    const form = document.getElementById('formAgregarLibro');
+    const formData = new FormData(form);
+
+    try {
+        const response = await $.ajax({
+            url: '/Books/addBook', // Asegúrate de que este endpoint exista en tu backend
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+        });
+
+        console.log(response);
+
+        // Cierra el modal, limpia el formulario y recarga los libros
+        $('#modalAgregarLibro').modal('hide');
+        form.reset();
+        this.loadBooks();
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Libro agregado correctamente',
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+    } catch (error) {
+        console.error("Error al agregar el libro:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al agregar el libro',
+            text: error.responseJSON?.message || 'Ocurrió un error inesperado.'
+        });
+    }
+},
+
     viewBook: function(book) {
         // Llenar campos del modal
-        $('#verLibroImagen').attr('src', book.imagen || 'uploads/notfound.png');
+        $('#verLibroImagen').attr('src', book.imagen || '/uploads/notfound.png');
         $('#verLibroGenero').text(book.categoria || 'Sin categoría');
         $('#verLibroTitulo').text(book.titulo);
         $('#verLibroAutor').text(`por ${book.autor}`);
@@ -108,6 +145,39 @@ const app = {
             $('#authorsTable tbody').html(`<tr><td colspan="5">Error al cargar autores.</td></tr>`);
         }
     },
+
+    loadAuthorsSelect: async function () {
+    try {
+        const authors = await $.getJSON(this.routes.getAuthors);
+        let options = '<option value="">Seleccione un autor</option>';
+
+        authors.forEach(author => {
+            options += `<option value="${author.id}">${author.nombre_completo}</option>`;
+        });
+
+        $('#selectAutor').html(options);
+    } catch (error) {
+        console.error("Error al cargar autores:", error);
+        $('#selectAutor').html('<option>Error al cargar</option>');
+    }
+},
+
+    loadCategoriesSelect: async function () {
+    try {
+        const categories = await $.getJSON(this.routes.getCategories);
+        let options = '<option value="">Seleccione una categoría</option>';
+
+        categories.forEach(category => {
+            options += `<option value="${category.id}">${category.nombre_categoria}</option>`;
+        });
+
+        $('#selectCategoria').html(options);
+    } catch (error) {
+        console.error("Error al cargar categorías:", error);
+        $('#selectCategoria').html('<option>Error al cargar</option>');
+    }
+},
+
 
     loadCategories: async function () {
         try {

@@ -137,6 +137,8 @@
             $sql = "delete from " . $table . " where id = " . $id;
             return $this->table->query( $sql );
         }
+
+        
         
 
     }
