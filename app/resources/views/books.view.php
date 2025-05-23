@@ -106,7 +106,77 @@
   </div>
 </div>
 
+<!-- Modal Editar Libro -->
+<div class="modal fade" id="modalEditarLibro" tabindex="-1" aria-labelledby="modalEditarLibroLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form id="formEditarLibro" enctype="multipart/form-data">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditarLibroLabel">Editar Libro</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editLibroId" name="id"> <!-- ID oculto -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="editTitulo" class="form-label">Título</label>
+              <input type="text" class="form-control" id="editTitulo" name="titulo" required>
+            </div>
+            <div class="col-md-6">
+              <label for="editAutor" class="form-label">Autor</label>
+              <select class="form-select" id="editAutor" name="autor_id" required>
+                <option value="">Seleccione un autor</option>
+                <!-- Se llenará dinámicamente -->
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="editCategoria" class="form-label">Categoría</label>
+              <select class="form-select" id="editCategoria" name="categoria_id" required>
+                <option value="">Seleccione una categoría</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="editIsbn" class="form-label">ISBN</label>
+              <input type="text" class="form-control" id="editIsbn" name="isbn" required>
+            </div>
+            <div class="col-md-6">
+              <label for="editFechaPublicacion" class="form-label">Fecha de Publicación</label>
+              <input type="date" class="form-control" id="editFechaPublicacion" name="fecha_publicacion" required>
+            </div>
+            <div class="col-md-6">
+              <label for="editIdioma" class="form-label">Idioma</label>
+              <select class="form-select" id="editIdioma" name="idioma" required>
+                <option value="">Seleccione un idioma</option>
+                <option value="Español">Español</option>
+                <option value="Inglés">Inglés</option>
+                <option value="Francés">Francés</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="editNumeroPaginas" class="form-label">Número de páginas</label>
+              <input type="number" class="form-control" id="editNumeroPaginas" name="numero_paginas" min="1" required>
+            </div>
+            <div class="col-md-6">
+              <label for="editImagen" class="form-label">Portada</label>
+              <input type="file" class="form-control" id="editImagen" name="imagen" accept="image/*">
+            </div>
+            <div class="col-12">
+              <label for="editSinopsis" class="form-label">Sinopsis</label>
+              <textarea class="form-control" id="editSinopsis" name="sinopsis" rows="4" required></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Guardar cambios</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
+
+<!-- Modal Ver Libro -->
 <div class="modal fade" id="modalVerLibro" tabindex="-1" aria-labelledby="modalVerLibroLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -180,13 +250,42 @@
                 app.loadAuthorsSelect();
                 app.loadCategoriesSelect();
                 $('#modalAgregarLibro').modal('show');
-            });
+              });
 
 
             $('#formAgregarLibro').on('submit', function (e) {
             e.preventDefault();
             app.addBook();
-        });
+            });
+
+            $('#formEditarLibro').on('submit', async function (e) {
+              e.preventDefault();
+
+              const form = document.getElementById('formEditarLibro');
+              const formData = new FormData(form);
+
+              try {
+                  const response = await $.ajax({
+                      url: '/Books/updateBook',
+                      method: 'POST',
+                      data: formData,
+                      contentType: false,
+                      processData: false,
+                  });
+                  console.log('Respuesta del servidor:', response);
+                  if (response) {
+                      $('#modalEditarLibro').modal('hide');
+                      app.loadBooks();
+                      Swal.fire('¡Actualizado!', response.message, 'success');
+                  } else {
+                      Swal.fire('Error', response.message || 'No se pudo actualizar el libro.', 'error');
+                  }
+
+              } catch (error) {
+                  console.error('Error actualizando libro:', error);
+                  Swal.fire('Error', 'Hubo un problema al actualizar el libro.', 'error');
+              }
+          });
 
         })
     </script>

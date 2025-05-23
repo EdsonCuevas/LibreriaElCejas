@@ -1,11 +1,14 @@
 const app = {
     routes : {
         getBooks : "/Books/getBooks",
+        updateBook: "/Books/updateBook",
+        deleteBook: "/Books/deleteBook",
         getAuthors : "/Authors/getAuthors",
         getCategories : "/Categories/getCategories",
         addCategory : "/Categories/addCategory",
         deleteCategory : "/Categories/deleteCategory",
         updateCategory : "/Categories/updateCategory",
+
     },
 
     loadBooks: async function () {
@@ -33,10 +36,10 @@ const app = {
                             <button class="btn btn-sm btn-primary me-1" title="Ver" onclick='app.viewBook(${JSON.stringify(book)})'>
                                 <i class="bi bi-eye-fill"></i>
                             </button>
-                            <button class="btn btn-sm btn-secondary me-1" title="Editar">
+                            <button class="btn btn-sm btn-secondary me-1" title="Editar" onclick='app.showEditModal(${JSON.stringify(book)})'>
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger" title="Eliminar">
+                            <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteBook(${book.id})">
                                 <i class="bi bi-trash-fill"></i>
                             </button>
                         </td>
@@ -106,6 +109,87 @@ const app = {
         const modal = new bootstrap.Modal(document.getElementById('modalVerLibro'));
         modal.show();
     },
+
+    showEditModal: async function (book) {
+    // Llenar select de autores y categorías
+    const [autores, categorias] = await Promise.all([
+        $.getJSON(this.routes.getAuthors),
+        $.getJSON(this.routes.getCategories)
+    ]);
+
+    // Llenar select de autores
+    const autorSelect = $('#editAutor');
+    autorSelect.empty().append(`<option value="">Seleccione un autor</option>`);
+    autores.forEach(autor => {
+        autorSelect.append(`<option value="${autor.id}" ${autor.nombre_completo === book.autor ? 'selected' : ''}>${autor.nombre_completo}</option>`);
+    });
+
+    // Llenar select de categorías
+    const categoriaSelect = $('#editCategoria');
+    categoriaSelect.empty().append(`<option value="">Seleccione una categoría</option>`);
+    categorias.forEach(cat => {
+        categoriaSelect.append(`<option value="${cat.id}" ${cat.nombre_categoria === book.categoria ? 'selected' : ''}>${cat.nombre_categoria}</option>`);
+    });
+
+    // Rellenar los campos del formulario
+    $('#editLibroId').val(book.id);
+    $('#editTitulo').val(book.titulo);
+    $('#editIsbn').val(book.isbn);
+    $('#editFechaPublicacion').val(book.fecha_publicacion);
+    $('#editIdioma').val(book.idioma);
+    $('#editNumeroPaginas').val(book.numero_paginas);
+    $('#editSinopsis').val(book.sinopsis);
+
+    // Mostrar el modal
+    $('#modalEditarLibro').modal('show');
+    },
+
+    deleteBook: async function (id) {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¡No podrás revertir esto!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await $.ajax({
+                    url: this.routes.deleteBook,
+                    type: 'POST',
+                    data: { id: id },
+                    dataType: 'json'
+                });
+
+                if (response.status) {
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El libro ha sido eliminado.',
+                        'success'
+                    );
+                    this.loadBooks();
+                } else {
+                    Swal.fire(
+                        'Error',
+                        'No se pudo eliminar el libro.',
+                        'error'
+                    );
+                }
+            } catch (error) {
+                console.error("Error eliminando libro:", error);
+                Swal.fire(
+                    'Error',
+                    'Ocurrió un error al eliminar el libro.',
+                    'error'
+                );
+            }
+        }
+    },
+
 
 
     loadAuthors: async function () {
