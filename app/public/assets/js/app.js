@@ -4,6 +4,8 @@ const app = {
         getAuthors : "/Authors/getAuthors",
         getCategories : "/Categories/getCategories",
         addCategory : "/Categories/addCategory",
+        addAuthor : "/Authors/addAuthor",
+        deleteAuthor: "/Authors/deleteAuthor"
     },
 
     loadBooks: async function () {
@@ -48,43 +50,7 @@ const app = {
         }
     },
 
-    loadAuthors: async function () {
-        try {
-            const authors = await $.getJSON(this.routes.getAuthors);
-            console.log(authors)
-
-            let html = '';
-            if (authors.length === 0) {
-                html = `<tr><td colspan="5">No hay libros disponibles.</td></tr>`;
-            } else {
-                authors.forEach(author => {
-                    html += `
-                        <tr>
-                            <td>${author.nombre_completo}</td>
-                            <td>${author.nacionalidad}</td>
-                            <td>${author.fecha_nacimiento}</td>
-                            <td>${author.created_at}</td>
-                            <td>${author.updated_at}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary me-1" title="Editar">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" title="Eliminar">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            $('#authorsTable tbody').html(html);
-
-        } catch (error) {
-            console.error("Error cargando autores:", error);
-            $('#authorsTable tbody').html(`<tr><td colspan="5">Error al cargar autores.</td></tr>`);
-        }
-    },
+    
 
     loadCategories: async function () {
         try {
@@ -170,7 +136,141 @@ const app = {
             alert('Error al eliminar la categoría.');
         }
     
+    },
+
+    loadAuthors: async function () {
+        try {
+            const authors = await $.getJSON(this.routes.getAuthors);
+            console.log(authors)
+
+            let html = '';
+            if (authors.length === 0) {
+                html = `<tr><td colspan="5">No hay libros disponibles.</td></tr>`;
+            } else {
+                authors.forEach(author => {
+                    html += `
+                        <tr>
+                            <td>${author.nombre_completo}</td>
+                            <td>${author.nacionalidad}</td>
+                            <td>${author.fecha_nacimiento}</td>
+                            <td>${author.created_at}</td>
+                            <td>${author.updated_at}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" title="Eliminar">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            $('#authorsTable tbody').html(html);
+
+        } catch (error) {
+            console.error("Error cargando autores:", error);
+            $('#authorsTable tbody').html(`<tr><td colspan="5">Error al cargar autores.</td></tr>`);
+        }
+    },
+    
+    addAuthor: async function () {
+        const authorData = {
+            nombre_completo: $('#nombreCompleto').val(),
+            nacionalidad: $('#nacionalidad').val(),
+            fecha_nacimiento: $('#fechaNacimiento').val()
+        };
+
+        try {
+            const response = await $.ajax({
+                url: this.routes.addAuthor,
+                type: 'POST',
+                data: authorData,
+                dataType: 'json'
+            });
+
+            if (response.status) {
+                // Mostrar alert de éxito
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'Autor guardado exitosamente',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.loadAuthors();
+                        // Cerrar modal
+                        $('#modalAgregarAutor').modal('hide');
+                        // Limpiar form
+                        $('#nombreCompleto').val('');
+                        $('#nacionalidad').val('');
+                        $('#fechaNacimiento').val('');
+                    }
+                });
+            } else {
+                // Mostrar SweetAlert2 de error
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al guardar el autor',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        } catch (error) {
+            console.error("Error guardando autor:", error);
+            // Mostrar SweetAlert2 de error
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al guardar el autor',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    },
+    
+    deleteAuthor: async function (id) {
+        try {
+            const response = await $.ajax({
+                url: this.routes.deleteAuthor,
+                type: 'POST',
+                data: { id: id },
+                dataType: 'json'
+            });
+
+            if (response.status) {
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'Autor eliminado exitosamente',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.loadAuthors();
+                        $('#modalAgregarAutor').modal('hide');
+                        $('#nombreCompleto').val('');
+                        $('#nacionalidad').val('');
+                        $('#fechaNacimiento').val('');
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al eliminar el autor',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        } catch (error) {
+            console.error("Error eliminando autor:", error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al eliminar el autor',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
     }
 
-    
 }
