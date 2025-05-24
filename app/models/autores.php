@@ -75,4 +75,5 @@ class autores extends Model {
             return ['status' => false, 'message' => 'Error al eliminar el autor: ' . $e->getMessage()];
         }
     }
+    
 }

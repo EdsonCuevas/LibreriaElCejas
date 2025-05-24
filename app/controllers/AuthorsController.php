@@ -31,5 +31,5 @@ class AuthorsController extends Controller {
         $response = $author->deleteAuthor($_POST['id']);
         echo json_encode($response);
     }
-    
+   
 }

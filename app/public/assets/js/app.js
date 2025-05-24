@@ -159,7 +159,7 @@ const app = {
                                 <button class="btn btn-sm btn-primary me-1" title="Editar">
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" title="Eliminar">
+                                <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteAuthor(${author.id})">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </td>
@@ -232,39 +232,50 @@ const app = {
     
     deleteAuthor: async function (id) {
         try {
-            const response = await $.ajax({
-                url: this.routes.deleteAuthor,
-                type: 'POST',
-                data: { id: id },
-                dataType: 'json'
+            // Mostrar SweetAlert2 de confirmación
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: '¿Deseas eliminar este autor?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
             });
 
-            if (response.status) {
-                Swal.fire({
-                    title: 'Éxito',
-                    text: 'Autor eliminado exitosamente',
-                    icon: 'success',
-                    confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.loadAuthors();
-                        $('#modalAgregarAutor').modal('hide');
-                        $('#nombreCompleto').val('');
-                        $('#nacionalidad').val('');
-                        $('#fechaNacimiento').val('');
-                    }
+            if (result.isConfirmed) {
+                // Si el usuario confirma, proceder con la eliminación
+                const response = await $.ajax({
+                    url: this.routes.deleteAuthor,
+                    type: 'POST',
+                    data: { id: id },
+                    dataType: 'json'
                 });
-            } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al eliminar el autor',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
+
+                if (response.status) {
+                    // Mostrar mensaje de éxito
+                    await Swal.fire({
+                        title: 'Éxito',
+                        text: 'Autor eliminado exitosamente',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    // Recargar la lista de autores
+                    this.loadAuthors();
+                } else {
+                    // Mostrar mensaje de error
+                    await Swal.fire({
+                        title: 'Error',
+                        text: 'Error al eliminar el autor',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
             }
         } catch (error) {
             console.error("Error eliminando autor:", error);
-            Swal.fire({
+            await Swal.fire({
                 title: 'Error',
                 text: 'Error al eliminar el autor',
                 icon: 'error',
@@ -272,5 +283,5 @@ const app = {
             });
         }
     }
-
+    
 }
