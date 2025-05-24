@@ -64,12 +64,46 @@
   </div>
 </div>
 
+<!-- Modal para editar autor -->
+<div class="modal fade" id="modalEditarAutor" tabindex="-1" aria-labelledby="modalEditarAutorLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditarAutorLabel">Editar autor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formEditarAutor">
+          <input type="hidden" id="editAutorId" name="id">
+          <div class="mb-3">
+            <label for="editNombreCompleto" class="form-label">Nombre completo</label>
+            <input type="text" class="form-control" id="editNombreCompleto" name="nombre_completo" required>
+          </div>
+          <div class="mb-3">
+            <label for="editNacionalidad" class="form-label">Nacionalidad</label>
+            <input type="text" class="form-control" id="editNacionalidad" name="nacionalidad" required>
+          </div>
+          <div class="mb-3">
+            <label for="editFechaNacimiento" class="form-label">Fecha de nacimiento</label>
+            <input type="date" class="form-control" id="editFechaNacimiento" name="fecha_nacimiento" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" form="formEditarAutor" class="btn btn-primary">Actualizar autor</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <?php
     include_once LAYOUTS . 'main_foot.php';
 
     setFooter($d);
 
 ?>
+
     <script>
         $( function (){ 
             app.loadAuthors();
@@ -78,7 +112,20 @@
                     e.preventDefault(); // Prevenir el submit tradicional
                     app.addAuthor();  // Llamar a la función personalizada
                 });
+
+                $("#formEditarAutor").on("submit", function (e) {
+                    e.preventDefault();
+                    app.editAuthor();
+                });
             });
+
+            app.showEditModal = function (author) {
+                $('#editAutorId').val(author.id);
+                $('#editNombreCompleto').val(author.nombre_completo);
+                $('#editNacionalidad').val(author.nacionalidad);
+                $('#editFechaNacimiento').val(author.fecha_nacimiento);
+                $('#modalEditarAutor').modal('show');
+            };
         })
     </script>
 

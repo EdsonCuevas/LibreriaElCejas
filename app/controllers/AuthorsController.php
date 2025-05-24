@@ -31,5 +31,14 @@ class AuthorsController extends Controller {
         $response = $author->deleteAuthor($_POST['id']);
         echo json_encode($response);
     }
-   
+   public function editAuthor(){
+        $author = new autores();
+        $data = $_POST;
+        
+        // Log para depuración
+        error_log("Datos recibidos para editar: " . print_r($data, true));
+        
+        $response = $author->editAuthor($data);
+        echo json_encode($response);
+    }
 }

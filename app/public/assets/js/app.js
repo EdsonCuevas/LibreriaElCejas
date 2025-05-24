@@ -5,7 +5,8 @@ const app = {
         getCategories : "/Categories/getCategories",
         addCategory : "/Categories/addCategory",
         addAuthor : "/Authors/addAuthor",
-        deleteAuthor: "/Authors/deleteAuthor"
+        deleteAuthor: "/Authors/deleteAuthor",
+        editAuthor: "/Authors/editAuthor"
     },
 
     loadBooks: async function () {
@@ -140,12 +141,17 @@ const app = {
 
     loadAuthors: async function () {
         try {
-            const authors = await $.getJSON(this.routes.getAuthors);
-            console.log(authors)
+            const response = await $.ajax({
+                url: this.routes.getAuthors,
+                type: 'GET',
+                dataType: 'json'
+            });
+            const authors = response;
+            console.log('Autores:', authors);
 
             let html = '';
-            if (authors.length === 0) {
-                html = `<tr><td colspan="5">No hay libros disponibles.</td></tr>`;
+            if (!authors || authors.length === 0) {
+                html = `<tr><td colspan="6">No hay autores disponibles.</td></tr>`;
             } else {
                 authors.forEach(author => {
                     html += `
@@ -156,9 +162,9 @@ const app = {
                             <td>${author.created_at}</td>
                             <td>${author.updated_at}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary me-1" title="Editar">
+                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick='app.showEditModal(${JSON.stringify(author)})'>
                                     <i class="bi bi-pencil-fill"></i>
-                                </button>
+                                </button> 
                                 <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteAuthor(${author.id})">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
@@ -282,6 +288,56 @@ const app = {
                 confirmButtonText: 'Aceptar'
             });
         }
+    },
+
+    showEditModal: function (author) {
+        try {
+            // Poblar el formulario con los datos del autor
+            $('#editAutorId').val(author.id);
+            $('#editNombreCompleto').val(author.nombre_completo);
+            $('#editNacionalidad').val(author.nacionalidad);
+            $('#editFechaNacimiento').val(author.fecha_nacimiento);
+            // Mostrar el modal
+            $('#modalEditarAutor').modal('show');
+        } catch (error) {
+            console.error("Error mostrando modal:", error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al mostrar el modal de edición',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    },
+
+    editAuthor: async function () {
+        const data = {
+            id: $('#editAutorId').val(),
+            nombre_completo: $('#editNombreCompleto').val(),
+            nacionalidad: $('#editNacionalidad').val(),
+            fecha_nacimiento: $('#editFechaNacimiento').val()
+        };
+
+        try {
+            const response = await $.ajax({
+                url: this.routes.editAuthor,
+                type: 'POST',
+                data: data,
+                dataType: 'json'
+            });
+
+            if (response.status) {
+                Swal.fire('¡Actualizado!', 'El autor fue actualizado con éxito.', 'success');
+                $('#modalEditarAutor').modal('hide');
+                this.loadAuthors();
+            } else {
+                Swal.fire('Error', 'No se pudo actualizar el autor.', 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error', 'Ocurrió un problema con la solicitud.', 'error');
+        }
     }
-    
 }
+
+        
