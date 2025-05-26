@@ -591,7 +591,7 @@ const app = {
                 dataType: 'json'
             });
 
-            if (response.status) {
+            if (response) {
                 Swal.fire('¡Actualizado!', 'El autor fue actualizado con éxito.', 'success');
                 $('#modalEditarAutor').modal('hide');
                 this.loadAuthors();

@@ -35,10 +35,8 @@ class AuthorsController extends Controller {
         $author = new autores();
         $data = $_POST;
         
-        // Log para depuración
-        error_log("Datos recibidos para editar: " . print_r($data, true));
-        
         $response = $author->editAuthor($data);
+        
         echo json_encode($response);
     }
 }
