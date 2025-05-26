@@ -6,12 +6,16 @@ class autores extends Model {
     protected $table;
     
     protected $fillable = [
+        'id',
         'nombre_completo',
         'nacionalidad',
         'fecha_nacimiento',
         'created_at',
         'updated_at'
     ];
+
+    protected $primaryKey = 'id';
+    protected $autoIncrement = true;
 
     public function __construct(){
         parent::__construct();
@@ -35,4 +39,62 @@ class autores extends Model {
 
         return $result;
     }
+
+    public function addAuthor($data) {
+        try {
+            $this->values = [
+                'nombre_completo' => $data['nombre_completo'],
+                'nacionalidad' => $data['nacionalidad'],
+                'fecha_nacimiento' => $data['fecha_nacimiento'],
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+
+            $result = $this->insert('autores', $this->values);
+            
+            if($result) {
+                // Get the last inserted ID
+                $id = $this->table->insert_id;
+                return ['status' => true, 'message' => 'Autor agregado exitosamente', 'id' => $id];
+            } else {
+                return ['status' => false, 'message' => 'Error al agregar el autor'];
+            }
+        } catch (\Exception $e) {
+            return ['status' => false, 'message' => 'Error al agregar el autor: ' . $e->getMessage()];
+        }
+    }
+    public function deleteAuthor($id) {
+        try {
+            $result = $this->delete('autores', $id);
+            if($result) {
+                return ['status' => true, 'message' => 'Autor eliminado exitosamente'];
+            } else {
+                return ['status' => false, 'message' => 'Error al eliminar el autor'];
+            }
+        } catch (\Exception $e) {
+            return ['status' => false, 'message' => 'Error al eliminar el autor: ' . $e->getMessage()];
+        }
+    }
+
+public function editAuthor($data) {
+    try {
+
+        // Preparamos los datos a actualizar
+        $updateData = [
+            'nombre_completo'   => $data['nombre_completo'],
+            'nacionalidad'      => $data['nacionalidad'],
+            'fecha_nacimiento'  => $data['fecha_nacimiento'],
+            'updated_at'        => date('Y-m-d H:i:s') // O puedes usar NOW() directo en SQL si tu clase lo permite
+        ];
+
+        // Ejecutamos el update usando tu clase DB
+        return $this->update('autores', $updateData, $data['id']);
+
+    } catch (\Exception $e) {
+        return ['status' => false, 'message' => 'Error al editar el autor: ' . $e->getMessage()];
+    }
 }
+
+
+}
+

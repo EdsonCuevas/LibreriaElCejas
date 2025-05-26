@@ -20,4 +20,23 @@ class AuthorsController extends Controller {
         $author = new autores();
         echo $author->getAllAuthors();
     }
+
+    public function addAuthor(){
+        $author = new autores();
+        $response = $author->addAuthor($_POST);
+        echo json_encode($response);
+    }
+    public function deleteAuthor(){
+        $author = new autores();
+        $response = $author->deleteAuthor($_POST['id']);
+        echo json_encode($response);
+    }
+   public function editAuthor(){
+        $author = new autores();
+        $data = $_POST;
+        
+        $response = $author->editAuthor($data);
+        
+        echo json_encode($response);
+    }
 }
