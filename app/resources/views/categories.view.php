@@ -118,7 +118,7 @@
             });
         });
 
-            app.showEditModal = function (categoria) {
+            app.showEditModalCategoria = function (categoria) {
                 $('#editCategoriaId').val(categoria.id);
                 $('#editNombreCategoria').val(categoria.nombre_categoria);
                 $('#editDescripcionCategoria').val(categoria.descripcion);

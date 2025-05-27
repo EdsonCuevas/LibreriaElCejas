@@ -119,7 +119,7 @@
                 });
             });
 
-            app.showEditModal = function (author) {
+            app.showEditModalAutor = function (author) {
                 $('#editAutorId').val(author.id);
                 $('#editNombreCompleto').val(author.nombre_completo);
                 $('#editNacionalidad').val(author.nacionalidad);

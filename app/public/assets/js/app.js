@@ -283,7 +283,7 @@ const app = {
                             <td>${category.created_at}</td>
                             <td>${category.updated_at}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick='app.showEditModal(${JSON.stringify(category)})'>
+                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick='app.showEditModalCategoria(${JSON.stringify(category)})'>
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteCategory(${category.id})">
@@ -427,7 +427,7 @@ const app = {
                             <td>${author.created_at}</td>
                             <td>${author.updated_at}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick='app.showEditModal(${JSON.stringify(author)})'>
+                                <button class="btn btn-sm btn-primary me-1" title="Editar" onclick='app.showEditModalAutor(${JSON.stringify(author)})'>
                                     <i class="bi bi-pencil-fill"></i>
                                 </button> 
                                 <button class="btn btn-sm btn-danger" title="Eliminar" onclick="app.deleteAuthor(${author.id})">
@@ -555,7 +555,7 @@ const app = {
         }
     },
 
-    showEditModal: function (author) {
+    showEditModalAutor: function (author) {
         try {
             // Poblar el formulario con los datos del autor
             $('#editAutorId').val(author.id);
