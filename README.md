@@ -102,16 +102,6 @@ $datos = $autor->select(['id', 'nombre'])
               ->get();
 ```
 
----
-
-## 🔐 Sistema de sesiones
-
-- Las sesiones se manejan desde `SessionController.php`.
-- Se usan para login/logout y verificación de acceso.
-- Las vistas se protegen dependiendo del estado de sesión.
-
----
-
 ## 📦 Recursos incluidos
 
 - [Bootstrap 5](https://getbootstrap.com)
